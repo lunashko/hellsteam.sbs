@@ -222,7 +222,35 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        alert('Функция оплаты находится в разработке');
+        // Анимация кнопки при нажатии
+        gsap.to(payButton, {
+            duration: 0.2,
+            scale: 0.95,
+            ease: 'power2.out',
+            onComplete: () => {
+                gsap.to(payButton, {
+                    duration: 0.2,
+                    scale: 1,
+                    ease: 'power2.out'
+                });
+            }
+        });
+
+        // Отправка запроса на сервер
+        fetch(`http://37.114.41.125:2631/invoice?amount=${amount}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.url) {
+                    // Переходим на страницу оплаты
+                    window.location.href = data.url;
+                } else {
+                    alert('Произошла ошибка при создании счета. Пожалуйста, попробуйте еще раз.');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при создании счета. Пожалуйста, попробуйте еще раз.');
+            });
     });
 
     // Инициализация начальных значений
